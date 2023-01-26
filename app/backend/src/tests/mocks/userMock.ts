@@ -6,12 +6,12 @@ export const userMock: IUser = {
   username: 'Idea',
   role: 'admin',
   email: 'idea@paraemail.com',
-  password: await bcryptjs.hash('xablau123', 21),
+  password: await bcryptjs.hash('xablau123', 8),
 };
 
 export const loginMock: ILogin = {
   email: 'idea@paraemail.com',
-  password: await bcryptjs.hash('xablau123', 21),
+  password: await bcryptjs.hash('xablau123', 8),
 };
 
 export const invalidLogins: ILogin[] = [
@@ -25,6 +25,6 @@ export const invalidLogins: ILogin[] = [
   },
   {
     email: 'parara@paraemail',
-    password: await bcryptjs.hash('xablau123', 21),
+    password: await bcryptjs.hash('xablau123', 16),
   },
 ];

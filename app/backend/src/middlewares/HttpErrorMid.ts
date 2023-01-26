@@ -3,7 +3,7 @@ import HttpException from '../utils/HttpExcep';
 
 const httpErrorMiddleware = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
   _next: NextFunction,
 ): void => {

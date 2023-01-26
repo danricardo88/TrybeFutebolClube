@@ -1,8 +1,16 @@
 import { Model, INTEGER, STRING } from 'sequelize';
-import { IUser } from '../../interfaces';
+// import { IUser } from '../../interfaces';
 import db from '.';
 
-class User extends Model implements IUser {
+// class Users extends Model implements IUser {
+//   declare id: number;
+//   declare username: string;
+//   declare role: string;
+//   declare email: string;
+//   declare password: string;
+// }
+
+class Users extends Model {
   declare id: number;
   declare username: string;
   declare role: string;
@@ -10,7 +18,7 @@ class User extends Model implements IUser {
   declare password: string;
 }
 
-User.init(
+Users.init(
   {
     id:
     {
@@ -52,4 +60,4 @@ User.init(
   },
 );
 
-export default User;
+export default Users;

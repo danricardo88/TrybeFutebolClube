@@ -2,11 +2,11 @@ import { Model, INTEGER, BOOLEAN } from 'sequelize';
 import db from '.';
 
 class Matches extends Model {
-  declare id:number;
-  declare username:string;
-  declare role:string;
-  declare email:string;
-  declare password:string;
+  declare id: number;
+  declare username: string;
+  declare role: string;
+  declare email: string;
+  declare password: string;
 }
 
 Matches.init(

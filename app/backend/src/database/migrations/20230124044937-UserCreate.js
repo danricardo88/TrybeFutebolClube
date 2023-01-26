@@ -14,7 +14,7 @@ module.exports = {
       username:
       {
         allowNull:false,
-        TYPE: Sequelize.STRING,
+        type: Sequelize.STRING,
       },
 
       role:

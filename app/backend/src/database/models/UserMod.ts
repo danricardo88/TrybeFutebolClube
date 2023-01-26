@@ -4,7 +4,7 @@ import db from '.';
 
 class User extends Model implements IUser {
   declare id: number;
-  declare username:string;
+  declare username: string;
   declare role: string;
   declare email: string;
   declare password: string;
@@ -12,33 +12,42 @@ class User extends Model implements IUser {
 
 User.init(
   {
-    id: {
+    id:
+    {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: INTEGER,
     },
-    username: {
+
+    username:
+    {
       allowNull: false,
       type: STRING,
     },
-    role: {
+
+    role:
+    {
       allowNull: false,
       type: STRING,
     },
-    email: {
+
+    email:
+    {
       allowNull: false,
       type: STRING,
     },
-    password: {
+
+    password:
+    {
       allowNull: false,
       type: STRING,
     },
   },
   {
     sequelize: db,
-    modelName: 'user',
-    tableName: 'users',
+    modelName: 'users',
+    underscored: true,
     timestamps: false,
   },
 );

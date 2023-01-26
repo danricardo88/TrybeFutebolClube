@@ -9,16 +9,20 @@ class Teams extends Model {
 
 Teams.init(
   {
-    id: {
+    id:
+    {
       type: INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
-    teamName: {
+
+    teamName:
+    {
       type: STRING(100),
       allowNull: false,
-    } },
+    },
+  },
   {
     underscored: true,
     sequelize: db,

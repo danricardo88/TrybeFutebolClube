@@ -3,13 +3,16 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('matches', {
-      id: {
+      id:
+      {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      homeTeamId: {
+
+      homeTeamId:
+      {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -18,26 +21,35 @@ module.exports = {
         },
         field: 'home_team_id'
       },
-      homeTeamGoals: {
+
+      homeTeamGoals:
+      {
         allowNull: false,
         type: Sequelize.INTEGER,
         field: 'home_team_goals'
       },
+
       awayTeamId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
+        references:
+        {
           model: 'teams',
           key: 'id',
         },
+
         field: 'away_team_id'
       },
-      awayTeamGoals: {
+
+      awayTeamGoals:
+      {
         allowNull: false,
         type: Sequelize.INTEGER,
         field: 'away_team_goals'
       },
-      inProgress: {
+
+      inProgress:
+      {
         allowNull: false,
         type: Sequelize.BOOLEAN,
         field: 'in_progress'

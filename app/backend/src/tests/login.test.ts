@@ -17,17 +17,18 @@ const { expect } = chai;
 describe('"/login" testes de integração de rota', () => {
   let chaiHttpResponse: Response;
 
-  before(async () => {
-    sinon.stub(User, 'findOne').resolves(userMock as User);
-  });
+  // before(async () => {
+  //   sinon.stub(User, 'findOne').resolves(userMock as User);
+  // });
 
-  after(() => {
-    (User.findOne as sinon.SinonStub).restore();
-  });
+  // after(() => {
+  //   (User.findOne as sinon.SinonStub).restore();
+  // });
 
   describe('POST', () => {
     describe('sucesso', () => {
       it('Login com sucesso', async () => {
+        sinon.stub(User, 'findOne').resolves(userMock as User);
         sinon.stub(bcryptjs, 'compare').resolves(true);
         chaiHttpResponse = await chai
           .request(app)
@@ -35,11 +36,22 @@ describe('"/login" testes de integração de rota', () => {
           .send(loginMock);
 
         expect(chaiHttpResponse.status).to.be.equal(200);
+        (User.findOne as sinon.SinonStub).restore();
         (bcryptjs.compare as sinon.SinonStub).restore();
       });
     });
 
     describe('It fails', () => {
+      beforeEach(async () => {
+        sinon.stub(User, 'findOne').resolves(undefined);
+        sinon.stub(bcryptjs, 'compare').resolves(false);
+      });
+
+      afterEach(() => {
+        (User.findOne as sinon.SinonStub).restore();
+        (bcryptjs.compare as sinon.SinonStub).restore();
+      });
+
       it('Falha se o e-mail não for passado', async () => {
         chaiHttpResponse = await chai
           .request(app)
@@ -77,7 +89,6 @@ describe('"/login" testes de integração de rota', () => {
       });
 
       it('Falha se a senha for inválida', async () => {
-        sinon.stub(bcryptjs, 'compare').resolves(false);
         chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -87,7 +98,6 @@ describe('"/login" testes de integração de rota', () => {
         expect(chaiHttpResponse.body).to.deep.equal({
           message: 'E-mail ou senha incorreta',
         });
-        (bcryptjs.compare as sinon.SinonStub).restore();
       });
     });
   });
@@ -96,24 +106,45 @@ describe('"/login" testes de integração de rota', () => {
 describe('"/login/validate" integração de rota', () => {
   let chaiHttpResponse: Response;
 
-  before(async () => {
-    sinon.stub(jsonwebtoken, 'verify').resolves({ data: 'OK' });
-    sinon.stub(User, 'findOne').resolves(userMock as User);
-  });
+  // before(async () => {
+  //   sinon.stub(jsonwebtoken, 'verify').resolves({ id: 1 });
+  //   sinon.stub(User, 'findOne').resolves(userMock as User);
+  // });
 
-  after(() => {
-    (User.findOne as sinon.SinonStub).restore();
-  });
+  // after(() => {
+  //   (User.findOne as sinon.SinonStub).restore();
+  // });
 
   describe('GET', () => {
+    afterEach(() => {
+      (User.findOne as sinon.SinonStub).restore();
+    });
+    
     it('Retorna a função do usuário logado', async () => {
+      sinon.stub(jsonwebtoken, 'verify').resolves({ id: 1 });
+      sinon.stub(User, 'findOne').resolves(userMock as User);
       chaiHttpResponse = await chai
         .request(app)
-        .get('/login/verify')
+        .get('/login/validate')
         .auth('token', { type: 'bearer' });
 
       expect(chaiHttpResponse.status).to.be.equal(200);
       expect(chaiHttpResponse.body).to.deep.equal({ role: userMock.role });
+    });
+
+    it('Falha se o usuário não existir', async () => {
+      // (User.findOne as sinon.SinonStub).restore();
+      sinon.stub(User, 'findOne').resolves(undefined);
+      chaiHttpResponse = await chai
+        .request(app)
+        .get('/login/validate')
+        .auth('token', { type: 'bearer' });
+
+      expect(chaiHttpResponse.status).to.be.equal(404);
+      // expect(chaiHttpResponse.body).to.deep.equal({ message: 'User not found' });
+      expect(chaiHttpResponse.body).to.deep.equal({
+        message: 'User not found',
+      });
     });
   });
 });

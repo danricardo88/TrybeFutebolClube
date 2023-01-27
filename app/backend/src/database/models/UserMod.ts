@@ -1,16 +1,8 @@
 import { Model, INTEGER, STRING } from 'sequelize';
-// import { IUser } from '../../interfaces';
+import { IUser } from '../../interfaces';
 import db from '.';
 
-// class Users extends Model implements IUser {
-//   declare id: number;
-//   declare username: string;
-//   declare role: string;
-//   declare email: string;
-//   declare password: string;
-// }
-
-class Users extends Model {
+class Users extends Model implements IUser {
   declare id: number;
   declare username: string;
   declare role: string;
@@ -20,42 +12,21 @@ class Users extends Model {
 
 Users.init(
   {
-    id:
-    {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
+    id: {
       type: INTEGER,
-    },
-
-    username:
-    {
       allowNull: false,
-      type: STRING,
+      primaryKey: true,
+      autoIncrement: true,
     },
-
-    role:
-    {
-      allowNull: false,
-      type: STRING,
-    },
-
-    email:
-    {
-      allowNull: false,
-      type: STRING,
-    },
-
-    password:
-    {
-      allowNull: false,
-      type: STRING,
-    },
+    username: STRING,
+    role: STRING,
+    email: STRING,
+    password: STRING,
   },
   {
     sequelize: db,
     modelName: 'users',
-    underscored: true,
+    tableName: 'users',
     timestamps: false,
   },
 );

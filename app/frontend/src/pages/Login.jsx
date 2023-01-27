@@ -17,12 +17,12 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const xablau = await requestLogin('/login', { email, password });
-      setToken(xablau.token);
+      const { token } = await requestLogin('/login', { email, password });
+      setToken(token);
 
       const { role } = await requestData('/login/validate', { email, password });
 
-      localStorage.setItem('token',  xablau.token);
+      localStorage.setItem('token', token);
       localStorage.setItem('role',  role);
 
       setIsLogged(true);

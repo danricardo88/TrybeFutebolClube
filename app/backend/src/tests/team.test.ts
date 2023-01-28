@@ -44,8 +44,10 @@ describe('"/teams/:id" testes de integração de rota', () => {
     it('Falha se a equipe não existir', async () => {
       sinon.stub(Team, 'findByPk').resolves(undefined);
       chaiHttpResponse = await chai.request(app).get('/teams/1');
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.deep.equal(teamsMock[0]);
-    })
+      expect(chaiHttpResponse.status).to.be.equal(404);
+      expect(chaiHttpResponse.body).to.deep.equal({
+        message: 'not found',
+      });
+    });
   });
 });

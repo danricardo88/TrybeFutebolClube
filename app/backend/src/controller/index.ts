@@ -1,3 +1,4 @@
 import UserControl from './UserControl';
+import TeamControl from './TeamControl';
 
-export default UserControl;
+export { UserControl, TeamControl };

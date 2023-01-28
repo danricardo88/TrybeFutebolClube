@@ -1,13 +1,11 @@
 import 'express-async-errors';
 import { Router } from 'express';
 import authMid from '../middlewares/AuthMid';
-import { UserService } from '../services';
 import { UserControl } from '../controller';
 
 const router = Router();
 
-const userService = new UserService();
-const userControl = new UserControl(userService);
+const userControl = new UserControl();
 
 router.post('/', userControl.login);
 

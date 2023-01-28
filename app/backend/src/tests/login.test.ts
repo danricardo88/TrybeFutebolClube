@@ -17,14 +17,6 @@ const { expect } = chai;
 describe('"/login" testes de integração de rota', () => {
   let chaiHttpResponse: Response;
 
-  // before(async () => {
-  //   sinon.stub(User, 'findOne').resolves(userMock as User);
-  // });
-
-  // after(() => {
-  //   (User.findOne as sinon.SinonStub).restore();
-  // });
-
   describe('POST', () => {
     describe('sucesso', () => {
       it('Login com sucesso', async () => {
@@ -106,15 +98,6 @@ describe('"/login" testes de integração de rota', () => {
 describe('"/login/validate" integração de rota', () => {
   let chaiHttpResponse: Response;
 
-  // before(async () => {
-  //   sinon.stub(jsonwebtoken, 'verify').resolves({ id: 1 });
-  //   sinon.stub(User, 'findOne').resolves(userMock as User);
-  // });
-
-  // after(() => {
-  //   (User.findOne as sinon.SinonStub).restore();
-  // });
-
   describe('GET', () => {
     afterEach(() => {
       (User.findOne as sinon.SinonStub).restore();
@@ -133,7 +116,6 @@ describe('"/login/validate" integração de rota', () => {
     });
 
     it('Falha se o usuário não existir', async () => {
-      // (User.findOne as sinon.SinonStub).restore();
       sinon.stub(User, 'findOne').resolves(undefined);
       chaiHttpResponse = await chai
         .request(app)
@@ -141,7 +123,6 @@ describe('"/login/validate" integração de rota', () => {
         .auth('token', { type: 'bearer' });
 
       expect(chaiHttpResponse.status).to.be.equal(404);
-      // expect(chaiHttpResponse.body).to.deep.equal({ message: 'User not found' });
       expect(chaiHttpResponse.body).to.deep.equal({
         message: 'User not found',
       });

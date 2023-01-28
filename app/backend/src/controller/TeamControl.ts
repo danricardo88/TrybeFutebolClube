@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { TeamService } from '../services';
-import { ITeamControl } from '../interfaces';
+import { ITeamControl } from '../interfaces/ITeam';
 
 export default class TeamControl implements ITeamControl {
-  constructor(private _service: TeamService) {
+  private _service: TeamService;
+
+  constructor() {
+    this._service = new TeamService();
     this.allTeam = this.allTeam.bind(this);
     this.listById = this.listById.bind(this);
   }

@@ -1,18 +1,19 @@
 import HttpExcep from '../utils/HttpExcep';
-import { ITeamService, ITeam } from '../interfaces';
-import TeamRepository from '../database/models/TeamsModel';
+import { ITeamService, ITeam } from '../interfaces/ITeam';
+import Teams from '../database/models/TeamsMod';
 
 export default class TeamService implements ITeamService {
-  private _model = TeamRepository;
+  private _repository = Teams;
 
   public async getAllTeam(): Promise<ITeam[]> {
-    const teams = await this._model.findAll();
+    const teams = await this._repository.findAll();
     return teams;
   }
 
   public async getById(id: number): Promise<ITeam> {
-    const team = await this._model.findByPk(id);
-    if (!team) throw new HttpExcep(404, 'Team not found');
-    return team;
+    const teams = await this._repository.findByPk(id);
+
+    if (!teams) throw new HttpExcep(404, 'Team not found');
+    return teams;
   }
 }

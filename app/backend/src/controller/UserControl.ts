@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
-import IUserService from '../interfaces/IUserService';
-import { IUserControl } from '../interfaces';
-// import UserService from '../services';
+import { IUserControl } from '../interfaces/IUser';
+import { UserService } from '../services';
 
-export default class UserController implements IUserControl {
-  constructor(private _service: IUserService) {
-    // this._service = service;
+export default class UserControl implements IUserControl {
+  private _service: UserService;
+
+  constructor() {
+    this._service = new UserService();
     this.login = this.login.bind(this);
     this.getUserRole = this.getUserRole.bind(this);
   }

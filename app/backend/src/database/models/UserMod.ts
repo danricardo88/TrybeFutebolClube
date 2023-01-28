@@ -1,5 +1,5 @@
 import { Model, INTEGER, STRING } from 'sequelize';
-import { IUser } from '../../interfaces';
+import { IUser } from '../../interfaces/IUser';
 import db from '.';
 
 class Users extends Model implements IUser {

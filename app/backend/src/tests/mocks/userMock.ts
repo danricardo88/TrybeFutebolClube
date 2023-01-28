@@ -1,5 +1,6 @@
 // import * as bcryptjs from 'bcryptjs';
-import { ILogin, IUser } from '../../interfaces';
+import { IUser } from '../../interfaces/IUser';
+import ILogin from '../../interfaces/ILogin';
 
 export const userMock: IUser = {
   id: 1,

@@ -1,6 +1,5 @@
 import { NextFunction } from 'express';
 import * as jsonwebtokens from 'jsonwebtoken';
-// import HttpExcep from './HttpExcep';
 
 const SECRET = process.env.SECRET || 'jwt_secret';
 

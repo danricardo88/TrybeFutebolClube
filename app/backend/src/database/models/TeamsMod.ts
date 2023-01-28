@@ -1,6 +1,5 @@
 import { Model, INTEGER, STRING } from 'sequelize';
 import db from '.';
-import Matches from './MatchesMod';
 
 class Teams extends Model {
   declare id:number;
@@ -19,7 +18,7 @@ Teams.init(
 
     teamName:
     {
-      type: STRING(100),
+      type: STRING,
       allowNull: false,
     },
   },
@@ -30,8 +29,5 @@ Teams.init(
     timestamps: false,
   },
 );
-
-Teams.hasMany(Matches);
-Matches.belongsTo(Teams);
 
 export default Teams;

@@ -23,7 +23,7 @@ export interface IMatchInfo extends IMatch {
 export interface IMatchDB extends IMatchInfo, Match {}
 
 export interface IMatchControl {
-  listMatch(req: Request, res: Response): Promise<void>;
+  getAll(req: Request, res: Response): Promise<void>;
   createMatch(req: Request, res: Response): Promise<void>;
   finishMatch(req: Request, res: Response): Promise<void>;
   upMatch(req: Request, res: Response): Promise<void>;

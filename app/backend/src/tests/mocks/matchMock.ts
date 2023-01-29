@@ -14,7 +14,7 @@ export const matchMock: IMatchInfo[] = [
     },
     teamAway: 
     {
-      teamName: 'Vasco',
+      teamName: 'Palmeiras',
     },
   },
 

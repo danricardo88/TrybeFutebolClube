@@ -6,7 +6,7 @@ import authMid from '../middlewares/AuthMid';
 const matchControl = new MatchControl();
 const router = Router();
 
-router.get('/', matchControl.listMatch);
+router.get('/', matchControl.getAll);
 router.post('/', authMid, matchControl.createMatch);
 router.patch('/:id/finish', matchControl.finishMatch);
 router.patch('/:id', matchControl.upMatch);

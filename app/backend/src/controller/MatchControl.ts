@@ -8,13 +8,13 @@ export default class MatchControl implements IMatchControl {
 
   constructor() {
     this._service = new MatchService();
-    this.listMatch = this.listMatch.bind(this);
+    this.getAll = this.getAll.bind(this);
     this.createMatch = this.createMatch.bind(this);
     this.finishMatch = this.finishMatch.bind(this);
     this.upMatch = this.upMatch.bind(this);
   }
 
-  async listMatch(req: Request, res: Response): Promise<void> {
+  async getAll(req: Request, res: Response): Promise<void> {
     const { inProgress } = req.query;
 
     const match = inProgress === undefined

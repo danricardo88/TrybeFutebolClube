@@ -12,8 +12,8 @@ import Teams from '../database/models/TeamsMod';
 import { matchSchema } from '../validate/schema';
 
 const INCLUDE = [
-  { model: Teams, as: 'teamHome', attributes: { exclude: ['id'] } },
-  { model: Teams, as: 'teamAway', attributes: { exclude: ['id'] } },
+  { model: Teams, as: 'homeTeam', attributes: { exclude: ['id'] } },
+  { model: Teams, as: 'awayTeam', attributes: { exclude: ['id'] } },
 ];
 
 export default class MatchService implements IMatchService {

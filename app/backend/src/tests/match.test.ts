@@ -6,8 +6,9 @@ import chaiHttp = require('chai-http');
 import { App } from '../app';
 import Match from '../database/models/MatchMod';
 import { Response } from 'superagent';
-import { IMatch, INewM } from '../interfaces';
+import { IMatch, IMatchDB, IMatchInfo } from '../interfaces/IMatch';
 import { matchMock, newMatch, invalidMatch, newMatchResp } from './mocks/matchMock';
+import { StatusCodes } from 'http-status-codes';
 
 
 chai.use(chaiHttp);
@@ -16,100 +17,124 @@ const { app } = new App();
 const { expect } = chai;
 
 describe('"/matches" testes de integração de rota', () => {
-  let chaiHttpResponse: Response;
+  let chaiHttpResp: Response;
 
   describe('GET', () => {
     afterEach(() => {
       (Match.findAll as sinon.SinonStub).restore();
     });
     it('Retorna todas as match', async () => {
-      sinon.stub(Match, 'findAll').resolves(matchMock as IMatch[]);
-      chaiHttpResponse = await chai.request(app).get('/matches');
+      sinon.stub(Match, 'findAll').resolves(matchMock as IMatchDB[]);
+      chaiHttpResp = await chai.request(app).get('/matches');
 
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.deep.equal(matchMock);
+      expect(chaiHttpResp.status).to.be.equal(200);
+      expect(chaiHttpResp.body).to.deep.equal(matchMock);
     });
 
     it('Retorna match que estão em andamento', async () => {
-      sinon.stub(Match, 'findAll').resolves([matchMock[1]] as IMatch[]);
-      chaiHttpResponse = await chai.request(app).get('/matches?inProgress=true');
+      sinon.stub(Match, 'findAll').resolves([matchMock[1]] as IMatchDB[]);
+      chaiHttpResp = await chai.request(app).get('/matches?inProgress=true');
 
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.deep.equal([matchMock[1]]);
+      expect(chaiHttpResp.status).to.be.equal(200);
+      expect(chaiHttpResp.body).to.deep.equal([matchMock[1]]);
     });
 
     it('Retorna match que não estão em andamento', async () => {
-      sinon.stub(Match, 'findAll').resolves([matchMock[0]] as IMatch[]);
-      chaiHttpResponse = await chai.request(app).get('/matches?inProgress=false');
+      sinon.stub(Match, 'findAll').resolves([matchMock[0]] as IMatchDB[]);
+      chaiHttpResp = await chai.request(app).get('/matches?inProgress=false');
 
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.deep.equal([matchMock[0]]);
+      expect(chaiHttpResp.status).to.be.equal(200);
+      expect(chaiHttpResp.body).to.deep.equal([matchMock[0]]);
     });
   });
 
   describe('POST', () => {
-    beforeEach(() => {
-      sinon.stub(jwt, 'verify').resolves({ id: 1 });
-    });
+    describe('With sucess', () => {
+      it('Creates a new match', async () => {
+        (jwt.verify as sinon.SinonStub).restore();
 
-    afterEach(() => {
-      (Match.create as sinon.SinonStub).restore();
-      (jwt.verify as sinon.SinonStub).restore();
-    });
+        sinon.stub(jwt, 'verify').resolves({ id: 1 });
+        sinon
+          .stub(Match, 'create')
+          .resolves(newMatchResp as IMatchDB);
 
-    describe('Sucesso', () => {
-      it('Cria uma nova match', async () => {
-        chaiHttpResponse = await chai
+        chaiHttpResp = await chai
           .request(app)
           .post('/matches')
           .send(newMatch)
           .auth('token', { type: 'bearer' });
-
-        expect(chaiHttpResponse.status).to.be.equal(201);
-        expect(chaiHttpResponse.body).to.deep.equal(newMatchResp);
+        expect(chaiHttpResp.status).to.be.equal(201);
+        expect(chaiHttpResp.body).to.deep.equal(newMatchResp);
       });
     });
 
-    describe('Falhou', () => {
-      it('Falha se o homeTeam for igual ao awayTeam', async () => {
-        chaiHttpResponse = await chai
+    describe('It fails', () => {
+      it('Fails if the homeTeam is equal to awayTeam', async () => {
+        (jwt.verify as sinon.SinonStub).restore();
+        sinon.stub(jwt, 'verify').resolves({ id: 1 });
+        chaiHttpResp = await chai
           .request(app)
           .post('/matches')
           .send(invalidMatch[0])
           .auth('token', { type: 'bearer' });
-
-        expect(chaiHttpResponse.status).to.be.equal(422);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'Não é possível criar com duas equipes iguais',
+        expect(chaiHttpResp.status).to.be.equal(422);
+        expect(chaiHttpResp.body).to.deep.equal({
+          message: 'It is not possible to create a match with two equal teams',
         });
       });
-
-      it('Falha se uma equipe não existe', async () => {
-        chaiHttpResponse = await chai
+      it('Fails if a team does not exists', async () => {
+        (jwt.verify as sinon.SinonStub).restore();
+        sinon.stub(jwt, 'verify').resolves({ id: 1 });
+        chaiHttpResp = await chai
           .request(app)
           .post('/matches')
           .send(invalidMatch[1])
           .auth('token', { type: 'bearer' });
-
-        expect(chaiHttpResponse.status).to.be.equal(404);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'Id do time não encontrado!',
+        expect(chaiHttpResp.status).to.be.equal(404);
+        expect(chaiHttpResp.body).to.deep.equal({
+          message: 'There is no team with such id!',
         });
       });
-
-      it('Falha se o token for inválido', async () => {
-        sinon.stub(jwt, 'verify').resolves(undefined);
-
-        chaiHttpResponse = await chai
+      it('Fails if the token is invalid', async () => {
+        (jwt.verify as sinon.SinonStub).restore();
+        chaiHttpResp = await chai
           .request(app)
           .post('/matches')
-          .send(newMatch)
-          .auth('invalidToken', { type: 'bearer' });
-
-        expect(chaiHttpResponse.status).to.be.equal(401);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'O token deve ser um token válido',
+          .send(newMatch);
+        expect(chaiHttpResp.status).to.be.equal(401);
+        expect(chaiHttpResp.body).to.deep.equal({
+          message: 'Token must be a valid token',
         });
+      });
+    });
+  });
+});
+
+describe('"/matches/:id/finish" route integration tests', () => {
+  let chaiHttpResp: Response;
+
+  describe('PATCH', () => {
+    afterEach(() => {
+      (Match.update as sinon.SinonStub).restore();
+    });
+
+    it('Finishs a match by his id', async () => {
+      sinon.stub(Match, 'update').resolves([1]);
+
+      chaiHttpResp = await chai.request(app).patch('/matches/1/finish');
+
+      expect(chaiHttpResp.status).to.be.equal(StatusCodes.OK);
+      expect(chaiHttpResp.body).to.deep.equal({ message: 'Finished' });
+    });
+
+    it('Fails if the update goes wrong', async () => {
+      sinon.stub(Match, 'update').resolves([-1]);
+
+      chaiHttpResp = await chai.request(app).patch('/matches/1/finish');
+
+      expect(chaiHttpResp.status).to.be.equal(StatusCodes.OK);
+      expect(chaiHttpResp.body).to.deep.equal({
+        message: 'Update unsuccessful',
       });
     });
   });

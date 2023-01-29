@@ -13,7 +13,7 @@ export default class TeamService implements ITeamService {
   public async getById(id: number): Promise<ITeam> {
     const teams = await this._repository.findByPk(id);
 
-    if (!teams) throw new HttpExcep(404, 'Team not found');
+    if (!teams) throw new HttpExcep(404, 'There is no team with such id!');
     return teams;
   }
 }

@@ -46,7 +46,7 @@ describe('"/teams/:id" testes de integração de rota', () => {
       chaiHttpResponse = await chai.request(app).get('/teams/1');
       expect(chaiHttpResponse.status).to.be.equal(404);
       expect(chaiHttpResponse.body).to.deep.equal({
-        message: 'not found',
+        message: 'There is no team with such id!',
       });
     });
   });

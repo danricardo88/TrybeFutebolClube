@@ -18,9 +18,15 @@ describe('"/login" testes de integração de rota', () => {
   let chaiHttpResponse: Response;
 
   describe('POST', () => {
+    afterEach(() => {
+      (User.findOne as sinon.SinonStub).restore();
+      (bcryptjs.compare as sinon.SinonStub).restore();
+    });
+
     describe('sucesso', () => {
       it('Login com sucesso', async () => {
         sinon.stub(User, 'findOne').resolves(userMock as User);
+        sinon.stub(jsonwebtoken, 'sign').resolves('token');
         sinon.stub(bcryptjs, 'compare').resolves(true);
         chaiHttpResponse = await chai
           .request(app)
@@ -28,8 +34,7 @@ describe('"/login" testes de integração de rota', () => {
           .send(loginMock);
 
         expect(chaiHttpResponse.status).to.be.equal(200);
-        (User.findOne as sinon.SinonStub).restore();
-        (bcryptjs.compare as sinon.SinonStub).restore();
+        (jsonwebtoken.sign as sinon.SinonStub).restore();
       });
     });
 
@@ -39,10 +44,10 @@ describe('"/login" testes de integração de rota', () => {
         sinon.stub(bcryptjs, 'compare').resolves(false);
       });
 
-      afterEach(() => {
-        (User.findOne as sinon.SinonStub).restore();
-        (bcryptjs.compare as sinon.SinonStub).restore();
-      });
+      // afterEach(() => {
+      //   (User.findOne as sinon.SinonStub).restore();    <---- test
+      //   (bcryptjs.compare as sinon.SinonStub).restore();
+      // });
 
       it('Falha se o e-mail não for passado', async () => {
         chaiHttpResponse = await chai

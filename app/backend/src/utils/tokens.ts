@@ -18,7 +18,7 @@ export default class TokenUtils {
       const verify = await this.jwt.verify(token, SECRET);
       return verify;
     } catch (e) {
-      return next({ status: 401, message: 'Invalid token' });
+      return next({ status: 401, message: 'Token must be a valid token' });
     }
   }
 }

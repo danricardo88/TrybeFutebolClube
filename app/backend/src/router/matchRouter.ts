@@ -3,9 +3,8 @@ import { Router } from 'express';
 import { MatchControl } from '../controller';
 import authMid from '../middlewares/AuthMid';
 
-const matchControl = new MatchControl();
-
 const router = Router();
+const matchControl = new MatchControl();
 
 router.get('/', matchControl.listMatch);
 router.post('/', authMid, matchControl.createMatch);

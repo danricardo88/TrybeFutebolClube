@@ -2,6 +2,7 @@ import * as express from 'express';
 import loginRout from './router/loginRout';
 import httpErrorMid from './middlewares/HttpErrorMid';
 import teamRout from './router/teamRout';
+import MatchRouter from './router/matchRouter';
 
 class App {
   public app: express.Express;
@@ -27,6 +28,7 @@ class App {
     this.app.use(accessControl);
     this.app.use('/login', loginRout);
     this.app.use('/teams', teamRout);
+    this.app.use('/matches', MatchRouter);
 
     this.app.use(httpErrorMid);
   }

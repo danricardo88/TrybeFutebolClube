@@ -13,8 +13,8 @@ interface IMatchUp {
 }
 
 interface IMatchCreationAttrs extends IMatchUp {
-  homeTeam: number;
-  awayTeam: number;
+  homeTeamId: number;
+  awayTeamId: number;
 }
 
 interface IMatchReturned extends IMatch {
@@ -28,9 +28,9 @@ interface IMatchReturned extends IMatch {
 
 class Match extends Model implements IMatch {
   declare id: number;
-  declare homeTeam: number;
+  declare homeTeamId: number;
   declare homeTeamGoals: number;
-  declare awayTeam: number;
+  declare awayTeamId: number;
   declare awayTeamGoals: number;
   declare inProgress: boolean;
 }
@@ -43,9 +43,9 @@ Match.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    homeTeam: INTEGER,
+    homeTeamId: INTEGER,
     homeTeamGoals: INTEGER,
-    awayTeam: INTEGER,
+    awayTeamId: INTEGER,
     awayTeamGoals: INTEGER,
     inProgress: BOOLEAN,
   },
@@ -58,11 +58,11 @@ Match.init(
   },
 );
 
-Teams.hasMany(Match, { foreignKey: 'homeTeam', as: 'homeTeamMatches' });
-Teams.hasMany(Match, { foreignKey: 'awayTeam', as: 'awayTeamMatches' });
+Teams.hasMany(Match, { foreignKey: 'homeTeamId', as: 'homeTeamMatches' });
+Teams.hasMany(Match, { foreignKey: 'awayTeamId', as: 'awayTeamMatches' });
 
-Match.belongsTo(Teams, { foreignKey: 'homeTeam', as: 'teamHome' });
-Match.belongsTo(Teams, { foreignKey: 'awayTeam', as: 'teamAway' });
+Match.belongsTo(Teams, { foreignKey: 'homeTeamId', as: 'teamHome' });
+Match.belongsTo(Teams, { foreignKey: 'awayTeamId', as: 'teamAway' });
 
 export default Match;
 export { IMatch, IMatchUp, IMatchCreationAttrs, IMatchReturned };

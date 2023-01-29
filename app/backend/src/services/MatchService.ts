@@ -19,7 +19,7 @@ export default class MatchService implements IMatchService {
   private _repository = Match;
   private _teamRepository = Teams;
 
-  public async getMatch(): Promise<IMatchDB[]> {
+  async getMatch(): Promise<IMatchDB[]> {
     const match = (await this._repository
       .findAll({
         include: INCLUDE,
@@ -28,7 +28,7 @@ export default class MatchService implements IMatchService {
     return match;
   }
 
-  public async getMatchProgress(status: string): Promise<IMatchDB[]> {
+  async getMatchProgress(status: string): Promise<IMatchDB[]> {
     const inProgress = status === 'true';
     const match = (await this._repository
       .findAll({
@@ -44,22 +44,22 @@ export default class MatchService implements IMatchService {
     if (error) throw new HttpExcep(400, 'All fields must be filled');
   }
 
-  private async validateMatchTeams({ homeTeam, awayTeam }: INewM) {
-    if (homeTeam === awayTeam) {
+  private async validateMatchTeams({ homeTeamId, awayTeamId }: INewM) {
+    if (homeTeamId === awayTeamId) {
       throw new HttpExcep(
         422,
         'It is not possible to create a match with two equal teams',
       );
     }
 
-    const validHomeTeam = await this._teamRepository.findByPk(homeTeam);
-    const validAwayTeam = await this._teamRepository.findByPk(awayTeam);
+    const validHomeTeam = await this._teamRepository.findByPk(homeTeamId);
+    const validAwayTeam = await this._teamRepository.findByPk(awayTeamId);
     if (!validHomeTeam || !validAwayTeam) {
       throw new HttpExcep(404, 'There is no team with such id!');
     }
   }
 
-  public async createNewMatch(match: INewM): Promise<IMatch> {
+  async createNewMatch(match: INewM): Promise<IMatch> {
     MatchService.validateMatchSchema(match);
     await this.validateMatchTeams(match);
 
@@ -68,5 +68,13 @@ export default class MatchService implements IMatchService {
       inProgress: true,
     });
     return newMatch;
+  }
+
+  async finishMatch(id: number): Promise<void> {
+    const [result] = await this._repository.update(
+      { inProgress: false },
+      { where: { id } },
+    );
+    if (result !== 1) throw new HttpExcep(404, 'Update unsuccessful');
   }
 }

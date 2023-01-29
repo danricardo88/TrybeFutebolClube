@@ -7,8 +7,8 @@ export interface IMatch extends INewM {
 }
 
 export interface INewM {
-  homeTeam: number;
-  awayTeam: number;
+  homeTeamId: number;
+  awayTeamId: number;
   homeTeamGoals: number;
   awayTeamGoals: number;
 }
@@ -23,10 +23,12 @@ export interface IMatchDB extends IMatchInfo, Match {}
 export interface IMatchControl {
   listMatch(req: Request, res: Response): Promise<void>;
   createMatch(req: Request, res: Response): Promise<void>;
+  finishMatch(req: Request, res: Response): Promise<void>;
 }
 
 export interface IMatchService {
   getMatch(): Promise<IMatchDB[]>;
   getMatchProgress(status: string): Promise<IMatchDB[]>;
   createNewMatch(match: INewM): Promise<IMatch>;
+  finishMatch(id: number): Promise<void>;
 }

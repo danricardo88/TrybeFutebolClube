@@ -10,6 +10,11 @@ import Match from '../database/models/MatchMod';
 import Teams from '../database/models/TeamsMod';
 import { matchSchema } from '../validate/schema';
 
+const INCLUDE = [
+  { model: Teams, as: 'teamHome', attributes: { exclude: ['id'] } },
+  { model: Teams, as: 'teamAway', attributes: { exclude: ['id'] } },
+];
+
 export default class MatchService implements IMatchService {
   private _repository = Match;
   private _teamRepository = Teams;
@@ -17,11 +22,7 @@ export default class MatchService implements IMatchService {
   public async getMatch(): Promise<IMatchDB[]> {
     const match = (await this._repository
       .findAll({
-        include:
-      [
-        { model: Teams, as: 'teamHome', attributes: { exclude: ['id'] } },
-        { model: Teams, as: 'teamAway', attributes: { exclude: ['id'] } },
-      ],
+        include: INCLUDE,
       })) as IMatchDB[];
 
     return match;
@@ -31,12 +32,7 @@ export default class MatchService implements IMatchService {
     const inProgress = status === 'true';
     const match = (await this._repository
       .findAll({
-        include:
-        [
-          { model: Teams, as: 'teamHome', attributes: { exclude: ['id'] } },
-          { model: Teams, as: 'teamAway', attributes: { exclude: ['id'] } },
-        ],
-
+        include: INCLUDE,
         where: { inProgress },
       })) as IMatchDB[];
 

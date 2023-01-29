@@ -32,7 +32,7 @@ export interface IMatchControl {
 export interface IMatchService {
   getMatch(): Promise<IMatchDB[]>;
   getMatchProgress(status: string): Promise<IMatchDB[]>;
-  createNewMatch(match: INewM): Promise<IMatch>;
+  createMatch(match: INewM): Promise<IMatch>;
   finishMatch(id: number): Promise<void>;
   upMatch(values: IMatchUpdate, id: number): Promise<void>;
 }

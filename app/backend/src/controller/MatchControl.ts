@@ -24,7 +24,7 @@ export default class MatchControl implements IMatchControl {
   }
 
   async createMatch(req: Request, res: Response): Promise<void> {
-    const newMatch = await this._service.createNewMatch(req.body);
+    const newMatch = await this._service.createMatch(req.body);
     res.status(StatusCodes.CREATED).json(newMatch);
   }
 

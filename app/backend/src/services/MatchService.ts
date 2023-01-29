@@ -60,7 +60,7 @@ export default class MatchService implements IMatchService {
     }
   }
 
-  async createNewMatch(match: INewM): Promise<IMatch> {
+  async createMatch(match: INewM): Promise<IMatch> {
     MatchService.validateMatchSchema(match);
     await this.validateMatchTeams(match);
 

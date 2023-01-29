@@ -12,12 +12,12 @@ export default class TeamControl implements ITeamControl {
     this.listById = this.listById.bind(this);
   }
 
-  public async allTeam(_req: Request, res: Response): Promise<void> {
+  async allTeam(_req: Request, res: Response): Promise<void> {
     const teams = await this._service.getAllTeam();
     res.status(StatusCodes.OK).json(teams);
   }
 
-  public async listById(req: Request, res: Response): Promise<void> {
+  async listById(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     const team = await this._service.getById(Number(id));
     res.status(StatusCodes.OK).json(team);

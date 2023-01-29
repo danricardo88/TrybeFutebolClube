@@ -12,12 +12,12 @@ export default class UserControl implements IUserControl {
     this.getUserRole = this.getUserRole.bind(this);
   }
 
-  public async login(req: Request, res: Response): Promise<void> {
+  async login(req: Request, res: Response): Promise<void> {
     const token = await this._service.login(req.body);
     res.status(StatusCodes.OK).json({ token });
   }
 
-  public async getUserRole(_req: Request, res: Response): Promise<void> {
+  async getUserRole(_req: Request, res: Response): Promise<void> {
     const { id } = res.locals.userIddentifier;
     const role = await this._service.getRole(id);
     res.status(StatusCodes.OK).json({ role });

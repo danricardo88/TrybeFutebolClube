@@ -5,6 +5,7 @@ import
   IMatchDB,
   IMatch,
   INewM,
+  IMatchUpdate,
 } from '../interfaces/IMatch';
 import Match from '../database/models/MatchMod';
 import Teams from '../database/models/TeamsMod';
@@ -75,6 +76,11 @@ export default class MatchService implements IMatchService {
       { inProgress: false },
       { where: { id } },
     );
+    if (result !== 1) throw new HttpExcep(404, 'Update unsuccessful');
+  }
+
+  async upMatch(values: IMatchUpdate, id: number): Promise<void> {
+    const [result] = await this._repository.update(values, { where: { id } });
     if (result !== 1) throw new HttpExcep(404, 'Update unsuccessful');
   }
 }

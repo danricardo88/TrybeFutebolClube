@@ -6,11 +6,13 @@ export interface IMatch extends INewM {
   inProgress: boolean;
 }
 
-export interface INewM {
-  homeTeamId: number;
-  awayTeamId: number;
+export interface IMatchUpdate {
   homeTeamGoals: number;
   awayTeamGoals: number;
+}
+export interface INewM extends IMatchUpdate {
+  homeTeamId: number;
+  awayTeamId: number;
 }
 
 export interface IMatchInfo extends IMatch {
@@ -24,6 +26,7 @@ export interface IMatchControl {
   listMatch(req: Request, res: Response): Promise<void>;
   createMatch(req: Request, res: Response): Promise<void>;
   finishMatch(req: Request, res: Response): Promise<void>;
+  upMatch(req: Request, res: Response): Promise<void>;
 }
 
 export interface IMatchService {
@@ -31,4 +34,5 @@ export interface IMatchService {
   getMatchProgress(status: string): Promise<IMatchDB[]>;
   createNewMatch(match: INewM): Promise<IMatch>;
   finishMatch(id: number): Promise<void>;
+  upMatch(values: IMatchUpdate, id: number): Promise<void>;
 }

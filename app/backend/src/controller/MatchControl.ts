@@ -11,6 +11,7 @@ export default class MatchControl implements IMatchControl {
     this.listMatch = this.listMatch.bind(this);
     this.createMatch = this.createMatch.bind(this);
     this.finishMatch = this.finishMatch.bind(this);
+    this.upMatch = this.upMatch.bind(this);
   }
 
   async listMatch(req: Request, res: Response): Promise<void> {
@@ -31,5 +32,11 @@ export default class MatchControl implements IMatchControl {
     const { id } = req.params;
     await this._service.finishMatch(Number(id));
     res.status(StatusCodes.OK).json({ message: 'Finished' });
+  }
+
+  async upMatch(req: Request, res: Response): Promise<void> {
+    const { id } = req.params;
+    await this._service.upMatch(req.body, Number(id));
+    res.status(StatusCodes.OK).json({ message: 'Successfully updated!' });
   }
 }

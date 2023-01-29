@@ -1,11 +1,11 @@
-import { INewM, IMatch, IMatchInfo  } from "../../interfaces/IMatch";
+import { INewM, IMatch, IMatchInfo, IMatchUpdate  } from "../../interfaces/IMatch";
 
 export const matchMock: IMatchInfo[] = [
   {
     id: 1,
-    homeTeam: 16,
+    homeTeamId: 16,
     homeTeamGoals: 1,
-    awayTeam: 8,
+    awayTeamId: 8,
     awayTeamGoals: 1,
     inProgress: false,
     teamHome: 
@@ -20,9 +20,9 @@ export const matchMock: IMatchInfo[] = [
 
   {
     id: 2,
-    homeTeam: 9,
+    homeTeamId: 9,
     homeTeamGoals: 1,
-    awayTeam: 14,
+    awayTeamId: 14,
     awayTeamGoals: 1,
     inProgress: true,
     teamHome: 
@@ -37,32 +37,43 @@ export const matchMock: IMatchInfo[] = [
 ];
 
 export const newMatch: INewM = {
-  homeTeam: 16,
-  awayTeam: 8,
+  homeTeamId: 16,
+  awayTeamId: 8,
   homeTeamGoals: 2,
   awayTeamGoals: 2,
 };
 
 export const invalidMatch: INewM[] = [
   {
-    homeTeam: 16,
-    awayTeam: 16,
+    homeTeamId: 16,
+    awayTeamId: 16,
     homeTeamGoals: 2,
     awayTeamGoals: 2,
   },
   {
-    homeTeam: 999,
-    awayTeam: 8,
+    homeTeamId: 999,
+    awayTeamId: 8,
     homeTeamGoals: 2,
     awayTeamGoals: 2,
   }
 ];
 
+export const missingField: Omit<INewM, 'homeTeamId'> = {
+  awayTeamId: 8,
+  homeTeamGoals: 2,
+  awayTeamGoals: 2,
+};
+
 export const newMatchResp: IMatch = {
   id: 1,
-  homeTeam: 16,
-  awayTeam: 8,
+  homeTeamId: 16,
+  awayTeamId: 8,
   homeTeamGoals: 2,
   awayTeamGoals: 2,
   inProgress: true,
+};
+
+export const updateMatch: IMatchUpdate  = {
+  homeTeamGoals: 7,
+  awayTeamGoals: 1,
 };

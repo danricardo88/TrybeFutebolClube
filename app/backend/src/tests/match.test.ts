@@ -7,7 +7,7 @@ import App from '../app';
 import Match from '../database/models/MatchMod';
 import { Response } from 'superagent';
 import { IMatch, IMatchDB, IMatchInfo } from '../interfaces/IMatch';
-import { matchMock, newMatch, invalidMatch, newMatchResp } from './mocks/matchMock';
+import { matchMock, newMatch, invalidMatch, newMatchResp, updateMatch, missingField } from './mocks/matchMock';
 import { StatusCodes } from 'http-status-codes';
 
 
@@ -49,8 +49,8 @@ describe('"/matches" testes de integração de rota', () => {
   });
 
   describe('POST', () => {
-    describe('With sucess', () => {
-      it('Creates a new match', async () => {
+    describe('Sucesso', () => {
+      it('Cria uma nova correspondência', async () => {
         (jwt.verify as sinon.SinonStub).restore();
 
         sinon.stub(jwt, 'verify').resolves({ id: 1 });
@@ -68,8 +68,8 @@ describe('"/matches" testes de integração de rota', () => {
       });
     });
 
-    describe('It fails', () => {
-      it('Fails if the homeTeam is equal to awayTeam', async () => {
+    describe('Falhouuu', () => {
+      it('Falha se o homeTeamId for igual ao awayTeamId', async () => {
         (jwt.verify as sinon.SinonStub).restore();
         sinon.stub(jwt, 'verify').resolves({ id: 1 });
         chaiHttpRes = await chai
@@ -82,7 +82,7 @@ describe('"/matches" testes de integração de rota', () => {
           message: 'It is not possible to create a match with two equal teams',
         });
       });
-      it('Fails if a team does not exists', async () => {
+      it('Falha se equipe não existe', async () => {
         (jwt.verify as sinon.SinonStub).restore();
         sinon.stub(jwt, 'verify').resolves({ id: 1 });
         chaiHttpRes = await chai
@@ -95,7 +95,7 @@ describe('"/matches" testes de integração de rota', () => {
           message: 'There is no team with such id!',
         });
       });
-      it('Fails if the token is invalid', async () => {
+      it('Falha se o token for inválido', async () => {
         (jwt.verify as sinon.SinonStub).restore();
         chaiHttpRes = await chai
           .request(app)
@@ -106,35 +106,66 @@ describe('"/matches" testes de integração de rota', () => {
           message: 'Token must be a valid token',
         });
       });
+      it('Falha se o corpo da requisição estiver faltando campos', async () => {
+        (jwt.verify as sinon.SinonStub).restore();
+        sinon.stub(jwt, 'verify').resolves({ id: 1 });
+
+        chaiHttpRes = await chai
+          .request(app)
+          .post('/matches')
+          .send(missingField)
+          .auth('token', { type: 'bearer' });
+
+        expect(chaiHttpRes.status).to.be.equal(400);
+        expect(chaiHttpRes.body).to.deep.equal({
+          message: 'All fields must be filled',
+        });
+      });
     });
   });
 });
 
-describe('"/matches/:id/finish" route integration tests', () => {
+describe('"/matches/:id/" testes de integração de rota', () => {
   let chaiHttpRes: Response;
 
   describe('PATCH', () => {
-    afterEach(() => {
-      (Match.update as sinon.SinonStub).restore();
-    });
+    afterEach(() => {(Match.update as sinon.SinonStub).restore();});
 
-    it('Finishs a match by his id', async () => {
-      sinon.stub(Match, 'update').resolves([1]);
+      describe('/matches/:id/', () => {
+        it('Edita uma correspondência com sucesso', async () => {
+        sinon.stub(Match, 'update').resolves([1]);
+        chaiHttpRes = await chai.request(app).patch('/matches/1/').send(updateMatch);
 
-      chaiHttpRes = await chai.request(app).patch('/matches/1/finish');
+        expect(chaiHttpRes.status).to.be.equal(StatusCodes.OK);
+        expect(chaiHttpRes.body).to.deep.equal({ message: 'Successfully updated!'});
+      });
 
-      expect(chaiHttpRes.status).to.be.equal(StatusCodes.OK);
-      expect(chaiHttpRes.body).to.deep.equal({ message: 'Finished' });
-    });
+      it('Falha se a atualização der errado', async () => {
+        sinon.stub(Match, 'update').resolves([-1]);
 
-    it('Fails if the update goes wrong', async () => {
-      sinon.stub(Match, 'update').resolves([-1]);
+        chaiHttpRes = await chai.request(app).patch('/matches/1/');
 
-      chaiHttpRes = await chai.request(app).patch('/matches/1/finish');
+        expect(chaiHttpRes.status).to.be.equal(StatusCodes.NOT_FOUND);
+        expect(chaiHttpRes.body).to.deep.equal({message: 'Update unsuccessful' });
+      });
 
-      expect(chaiHttpRes.status).to.be.equal(StatusCodes.NOT_FOUND);
-      expect(chaiHttpRes.body).to.deep.equal({
-        message: 'Update unsuccessful',
+      describe('/matches/:id/finish', () => {
+        it('Finishs a match by his id', async () => {
+          sinon.stub(Match, 'update').resolves([1]);
+
+          chaiHttpRes = await chai.request(app).patch('/matches/1/finish');
+
+          expect(chaiHttpRes.status).to.be.equal(StatusCodes.OK);
+          expect(chaiHttpRes.body).to.deep.equal({ message: 'Finished' });
+        });
+
+        it('Fails if the update goes wrong', async () => {
+          sinon.stub(Match, 'update').resolves([-1]);
+          chaiHttpRes = await chai.request(app).patch('/matches/1/finish');
+
+          expect(chaiHttpRes.status).to.be.equal(StatusCodes.NOT_FOUND);
+          expect(chaiHttpRes.body).to.deep.equal({ message: 'Update unsuccessful' });
+        });
       });
     });
   });

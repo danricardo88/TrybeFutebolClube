@@ -1,134 +1,149 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
 import * as jsonwebtoken from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import * as bcryptjs from 'bcryptjs';
 import { Response } from 'superagent';
 // @ts-ignore
 import chaiHttp = require('chai-http');
-import { App } from '../app';
-import User from '../database/models/UserMod';
-import { invalidLogins, loginMock, userMock } from './mocks/userMock';
+import App from '../app';
+import Users from '../database/models/UserMod';
+import {
+  Token,
+  invalidLogins,
+  loginMock,
+  userMock,
+} from './mocks/userMock';
+import { StatusCodes } from 'http-status-codes';
 
 chai.use(chaiHttp);
 
 const { app } = new App();
 const { expect } = chai;
 
-describe('"/login" testes de integração de rota', () => {
-  let chaiHttpResponse: Response;
+describe('"/login" route integration tests', () => {
+  let chaiHttpRes: Response;
 
   describe('POST', () => {
     afterEach(() => {
-      (User.findOne as sinon.SinonStub).restore();
+      (Users.findOne as sinon.SinonStub).restore();
       (bcryptjs.compare as sinon.SinonStub).restore();
     });
 
-    describe('sucesso', () => {
-      it('Login com sucesso', async () => {
-        sinon.stub(User, 'findOne').resolves(userMock as User);
-        sinon.stub(jsonwebtoken, 'sign').resolves('token');
+    describe('With sucess', () => {
+      it('Login successfully', async () => {
+        sinon.stub(Users, 'findOne').resolves(userMock as Users);
+        sinon.stub(jsonwebtoken, 'sign').resolves('generatedToken');
         sinon.stub(bcryptjs, 'compare').resolves(true);
-        chaiHttpResponse = await chai
+
+        chaiHttpRes = await chai
           .request(app)
           .post('/login')
           .send(loginMock);
 
-        expect(chaiHttpResponse.status).to.be.equal(200);
+        expect(chaiHttpRes.status).to.be.equal(StatusCodes.OK);
+        expect(chaiHttpRes.body).to.deep.equal({
+          token: 'generatedToken',
+        });
+
         (jsonwebtoken.sign as sinon.SinonStub).restore();
       });
     });
 
-    describe('It fails', () => {
+    describe('With failure', () => {
       beforeEach(async () => {
-        sinon.stub(User, 'findOne').resolves(undefined);
+        sinon.stub(Users, 'findOne').resolves(undefined);
         sinon.stub(bcryptjs, 'compare').resolves(false);
       });
 
-      // afterEach(() => {
-      //   (User.findOne as sinon.SinonStub).restore();    <---- test
-      //   (bcryptjs.compare as sinon.SinonStub).restore();
-      // });
-
-      it('Falha se o e-mail não for passado', async () => {
-        chaiHttpResponse = await chai
+      it('Fails if the email is not passed', async () => {
+        chaiHttpRes = await chai
           .request(app)
           .post('/login')
           .send(invalidLogins[0]);
 
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'Todos os campos devem ser preenchidos',
+        expect(chaiHttpRes.status).to.be.equal(400);
+        expect(chaiHttpRes.body).to.deep.equal({
+          message: 'All fields must be filled',
         });
       });
 
-      it('Falha se a senha não for passada', async () => {
-        chaiHttpResponse = await chai
+      it('Fails if the password is not passed', async () => {
+        chaiHttpRes = await chai
           .request(app)
           .post('/login')
           .send(invalidLogins[1]);
 
-        expect(chaiHttpResponse.status).to.be.equal(400);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'Todos os campos devem ser preenchidos',
+        expect(chaiHttpRes.status).to.be.equal(400);
+        expect(chaiHttpRes.body).to.deep.equal({
+          message: 'All fields must be filled',
         });
       });
 
-      it('Falha se o e-mail for inválido', async () => {
-        chaiHttpResponse = await chai
+      it('Fails if the email is invalid', async () => {
+        chaiHttpRes = await chai
           .request(app)
           .post('/login')
           .send(invalidLogins[2]);
 
-        expect(chaiHttpResponse.status).to.be.equal(401);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'senha ou email incorreto',
+        expect(chaiHttpRes.status).to.be.equal(401);
+        expect(chaiHttpRes.body).to.deep.equal({
+          message: 'Incorrect email or password',
         });
       });
 
-      it('Falha se a senha for inválida', async () => {
-        chaiHttpResponse = await chai
+      it('Fails if the password is invalid', async () => {
+        chaiHttpRes = await chai
           .request(app)
           .post('/login')
           .send({ ...loginMock, password: 'coxinha' });
 
-        expect(chaiHttpResponse.status).to.be.equal(401);
-        expect(chaiHttpResponse.body).to.deep.equal({
-          message: 'E-mail ou senha incorreta',
+        expect(chaiHttpRes.status).to.be.equal(401);
+        expect(chaiHttpRes.body).to.deep.equal({
+          message: 'Incorrect email or password',
         });
       });
     });
   });
 });
 
-describe('"/login/validate" integração de rota', () => {
-  let chaiHttpResponse: Response;
+describe('"/login/validate" route integration tests', () => {
+  let chaiHttpRes: Response;
 
   describe('GET', () => {
+    beforeEach(() => {
+      sinon.stub(jsonwebtoken, 'verify').resolves(Token);
+    });
+
     afterEach(() => {
-      (User.findOne as sinon.SinonStub).restore();
-    });
-    
-    it('Retorna a função do usuário logado', async () => {
-      sinon.stub(jsonwebtoken, 'verify').resolves({ id: 1 });
-      sinon.stub(User, 'findOne').resolves(userMock as User);
-      chaiHttpResponse = await chai
-        .request(app)
-        .get('/login/validate')
-        .auth('token', { type: 'bearer' });
-
-      expect(chaiHttpResponse.status).to.be.equal(200);
-      expect(chaiHttpResponse.body).to.deep.equal({ role: userMock.role });
+      (Users.findOne as sinon.SinonStub).restore();
+      (jwt.verify as sinon.SinonStub).restore();
     });
 
-    it('Falha se o usuário não existir', async () => {
-      sinon.stub(User, 'findOne').resolves(undefined);
-      chaiHttpResponse = await chai
+    it('Returns the logged user role', async () => {
+      sinon.stub(Users, 'findOne').resolves(userMock as Users);
+
+      chaiHttpRes = await chai
         .request(app)
         .get('/login/validate')
-        .auth('token', { type: 'bearer' });
+        .set('Authorization', 'something');
 
-      expect(chaiHttpResponse.status).to.be.equal(404);
-      expect(chaiHttpResponse.body).to.deep.equal({
+      expect(chaiHttpRes.status).to.be.equal(200);
+      console.log(chaiHttpRes.body);
+
+      expect(chaiHttpRes.body).to.deep.equal({ role: userMock.role });
+    });
+
+    it('Fails if the user does not exists', async () => {
+      sinon.stub(Users, 'findOne').resolves(undefined);
+
+      chaiHttpRes = await chai
+        .request(app)
+        .get('/login/validate')
+        .set('Authorization', 'something');
+
+      expect(chaiHttpRes.status).to.be.equal(404);
+      expect(chaiHttpRes.body).to.deep.equal({
         message: 'User not found',
       });
     });

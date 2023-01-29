@@ -1,34 +1,38 @@
-// import * as bcryptjs from 'bcryptjs';
-import { IUser } from '../../interfaces/IUser';
 import ILogin from '../../interfaces/ILogin';
+import { IUsers } from '../../database/models/UserMod';
+import IToken from '../../interfaces/ITokens';
 
-export const userMock: IUser = {
+export const Token: IToken = {
+  data: {
+    id: 1,
+    email: 'danric@parara.com',
+  },
+};
+
+export const userMock: IUsers = {
   id: 1,
-  username: 'Idea',
+  username: 'Arezu',
   role: 'admin',
-  email: 'idea@paraemail.com',
-  // password: await bcryptjs.hash('xablau123', 8),
-  password: 'criptografado'
-}
+  email: 'danric@parara.com',
+  password: 'criptomoeda',
+};
 
 export const loginMock: ILogin = {
-  email: 'idea@paraemail.com',
-  // password: await bcryptjs.hash('xablau123', 8),
-  password: 'criptografado'
+  email: 'danric@parara.com',
+  password: 'criptomoeda',
 };
 
 export const invalidLogins: ILogin[] = [
   {
     email: '',
-    password: 'pirimplimplim',
+    password: 'isispincesa',
   },
   {
-    email: 'parara@paraemail.com',
+    email: 'sanji@parara.com',
     password: '',
   },
   {
-    email: 'parara@paraemail',
-    // password: await bcryptjs.hash('xablau123', 16),
-    password: 'xablauzinho'
+    email: 'sanji@parara',
+    password: 'marimozoro',
   },
 ];

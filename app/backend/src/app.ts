@@ -27,6 +27,7 @@ class App {
     this.app.use(accessControl);
     this.app.use('/login', loginRout);
     this.app.use('/teams', teamRout);
+
     this.app.use(httpErrorMid);
   }
 
@@ -35,7 +36,7 @@ class App {
   }
 }
 
-export { App };
+export default App;
 
 // Essa segunda exportação é estratégica, e a execução dos testes de cobertura depende dela
-export const { app } = new App();
+// export const { app } = new App();

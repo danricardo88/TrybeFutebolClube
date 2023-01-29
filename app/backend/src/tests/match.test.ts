@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import * as jwt from 'jsonwebtoken';
 // @ts-ignore
 import chaiHttp = require('chai-http');
-import { App } from '../app';
+import App from '../app';
 import Match from '../database/models/MatchMod';
 import { Response } from 'superagent';
 import { IMatch, IMatchDB, IMatchInfo } from '../interfaces/IMatch';

@@ -1,8 +1,19 @@
 import { Model, INTEGER, STRING } from 'sequelize';
-// import { IUser } from '../../interfaces/IUser';
 import db from '.';
 
-class Users extends Model {
+interface IUsers {
+  id: number;
+  username: string;
+  role: string;
+  email: string;
+  password: string;
+}
+
+type IUsersCreatAtr = Omit<IUsers, 'id'>;
+
+type IUsersReturn = Omit<IUsers, 'password'>;
+
+class Users extends Model<IUsers, IUsersCreatAtr> {
   declare id: number;
   declare username: string;
   declare role: string;
@@ -32,3 +43,4 @@ Users.init(
 );
 
 export default Users;
+export { IUsers, IUsersCreatAtr, IUsersReturn };

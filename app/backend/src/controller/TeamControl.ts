@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { TeamService } from '../services';
-import { ITeamControl } from '../interfaces/ITeam';
+// import { ITeamControl } from '../interfaces/ITeam';
 
-export default class TeamControl implements ITeamControl {
+export default class TeamControl {
   private _service: TeamService;
 
   constructor() {

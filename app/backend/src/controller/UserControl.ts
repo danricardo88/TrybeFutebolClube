@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { IUserControl } from '../interfaces/IUser';
+// import { IUserControl } from '../interfaces/IUser';
 import { UserService } from '../services';
 
-export default class UserControl implements IUserControl {
+export default class UserControl {
   private _service: UserService;
 
   constructor() {

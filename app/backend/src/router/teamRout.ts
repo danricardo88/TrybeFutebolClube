@@ -1,12 +1,10 @@
 import 'express-async-errors';
 import { Router } from 'express';
-import TeamControl from '../controller/TeamControl';
+import { teamControl } from './instancesControl';
 
 const router = Router();
 
-const teamsController = new TeamControl();
-
-router.get('/', teamsController.allTeam);
-router.get('/:id', teamsController.listById);
+router.get('/', teamControl.allTeam);
+router.get('/:id', teamControl.listById);
 
 export default router;
